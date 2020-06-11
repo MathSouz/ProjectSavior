@@ -31,7 +31,9 @@ const camera = {
     y: 0
 }
 
-function preload() {
+function preload() 
+{
+    initGeolocation()
     sprites['heli'] = loadImage('assets/theHelicopter.png');
     sprites['fan'] = loadImage('assets/fan.png')
     sprites['rescue'] = [
