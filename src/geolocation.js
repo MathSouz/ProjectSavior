@@ -1,7 +1,7 @@
 function initGeolocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((pos) => {
-            const urlToFetch = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${pos.coords.latitude},${pos.coords.longitude}&result_type=country&key=AIzaSyBhn4Mv4O19lb5rthedXmBhbmlmMJ7YHek`;
+            const urlToFetch = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${pos.coords.latitude},${pos.coords.longitude}&result_type=country&key=${API_KEY}`;
 
             fetch(urlToFetch, { method: 'get' })
                 .then((response) => {
