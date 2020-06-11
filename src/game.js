@@ -31,256 +31,6 @@ const camera = {
     y: 0
 }
 
-class GameObject {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.velX = 0;
-        this.velY = 0;
-        this.rotation = 0;
-        this.windInfluence = true;
-        this.iconColor = { r: 0, g: 200, b: 0 }
-    }
-
-    onAdded() {
-
-    }
-
-    updateObject() {
-        this.x += this.velX;
-        this.y += this.velY;
-    }
-
-    renderObject() {
-        color(0, 0, 0)
-    }
-}
-
-class Touchable extends GameObject {
-    constructor(x, y, radius) {
-        super(x, y)
-        this.radius = radius;
-        this.isTouching = false;
-    }
-}
-
-class Boat extends Touchable {
-    constructor(x, y, radius = 64) {
-        super(x, y);
-        this.radius = radius;
-        this.rotation = Math.random() * Math.PI * 2;
-        this.windInfluence = false
-        this.iconColor = { r: 200, g: 200, b: 0 }
-    }
-
-    updateObject() {
-        super.updateObject();
-
-        if (this.isTouching) {
-            if (peopleCarried > 0)
-                unloadingRescuesTimer++;
-        }
-
-        else {
-            unloadingRescuesTimer = 0;
-        }
-
-        if (unloadingRescuesTimer > 100) {
-            peopleCarried--;
-            completedRescues++;
-            unloadingRescuesTimer = 0;
-        }
-    }
-
-    renderObject() {
-        super.renderObject()
-        push()
-        translate(this.x, this.y)
-        drawLoadingCircle(0, 0, this.radius, unloadingRescuesTimer / 100, { r: 200, g: 200, b: 0 })
-        rotate(this.rotation)
-        translate(-32, -32)
-        noSmooth()
-        image(sprites['boat'], 0, 0)
-        pop()
-    }
-}
-
-class HelpingPerson extends Touchable {
-    constructor(x, y, radius, enoughHelpingCounter) {
-        super(x, y);
-        this.radius = radius;
-        this.windInfluence = false;
-        this.helpingCounter = 0;
-        this.enoughHelpingCounter = enoughHelpingCounter;
-    }
-
-    getHelpingProgress() {
-        return this.helpingCounter / this.enoughHelpingCounter;
-    }
-
-    updateObject() {
-        super.updateObject();
-
-        if (this.isTouching && peopleCarried < maxPeopleCarriable) {
-            if (this.helpingCounter < this.enoughHelpingCounter) {
-                this.helpingCounter++;
-                sounds['wheel'].playMode('untilDone');
-                sounds['wheel'].setVolume(4)
-                sounds['wheel'].play()
-            }
-
-            else {
-                this.helpingCounter = this.enoughHelpingCounter;
-                gameObjects.pop(this)
-                onRescue(this)
-            }
-        }
-
-        else {
-            this.helpingCounter = 0;
-            sounds['wheel'].stop()
-        }
-    }
-
-    renderObject() {
-        super.renderObject();
-        drawLoadingCircle(this.x, this.y, this.radius, this.getHelpingProgress())
-        /*push()
-        translate(this.x, this.y)
-        noFill()
-
-        stroke(255, 255, 255)
-        strokeWeight(2)
-        circle(0, 0, this.radius)
-
-        if (this.getHelpingProgress() > 0) {
-            noFill()
-            strokeWeight(3)
-            stroke(0, 255, 0)
-            arc(0, 0, this.radius, this.radius, 0, Math.PI * 2 * this.getHelpingProgress(), OPEN)
-        }
-
-        strokeWeight(1)
-
-        pop();*/
-    }
-}
-
-class Player extends GameObject {
-    constructor(x, y) {
-        super(x, y);
-        this.speed = 1;
-        this.rotationSpeed = Math.PI / 180;
-        this.fanRot = 0;
-        this.fanRotSpeed = Math.PI / 5;
-    }
-
-    onAdded() {
-        super.onAdded()
-    }
-
-    moveTowards() {
-        this.velX = Math.cos(this.rotation) * this.speed * Math.min(1, this.fanRotSpeed);
-        this.velY = Math.sin(this.rotation) * this.speed * Math.min(1, this.fanRotSpeed);
-    }
-
-    updateObject() {
-        super.updateObject();
-
-        if (isTouchHolding()) {
-            // Touching Handler
-        }
-
-        else {
-            if (controls.right) {
-                this.rotation += this.rotationSpeed * this.fanRotSpeed;
-            }
-
-            if (controls.left) {
-                this.rotation -= this.rotationSpeed * this.fanRotSpeed;
-            }
-
-            if (controls.up) {
-                if (this.speed < 1) {
-                    this.speed += 0.01;
-                }
-            }
-
-            else if (controls.down) {
-                if (this.speed > -1) {
-                    this.speed -= 0.01 / 2;
-                }
-            }
-
-            else {
-                this.speed *= 0.01;
-            }
-
-            this.moveTowards()
-        }
-
-        for (let i = 0; i < gameObjects.length; i++) {
-            const go = gameObjects[i];
-
-            if (go instanceof Touchable) {
-                const touchable = go;
-
-                if (distance(this.x, this.y, touchable.x, touchable.y) < touchable.radius / 2) {
-                    touchable.isTouching = true;
-                }
-
-                else {
-                    touchable.isTouching = false;
-                }
-            }
-        }
-
-        this.fanRot += this.fanRotSpeed;
-
-        if (fuel > 0) {
-            fuel -= 1
-        }
-
-        else {
-            this.fanRotSpeed -= 0.001;
-
-            if (this.fanRotSpeed <= 0) {
-                this.fanRotSpeed = 0;
-            }
-
-            sounds['heli_rotor'].rate(this.fanRotSpeed);
-        }
-
-        if (this.fanRotSpeed > 0) {
-            sounds['heli_rotor'].playMode('untilDone');
-            sounds['heli_rotor'].play()
-        }
-    }
-
-    renderObject() {
-        super.renderObject();
-        noSmooth()
-        push();
-        translate(this.x, this.y);
-        rotate(this.rotation + Math.PI / 2)
-        translate(0, 10)
-        scale(1, 1 - (0.15 * Math.abs(this.speed)))
-
-        push()
-        translate(-32, -32)
-        image(sprites['heli'], 0, 0)
-        pop()
-
-        push()
-        translate(0, -10)
-        rotate(this.fanRot)
-        translate(-32, -32)
-        image(sprites['fan'], 0, 0)
-        pop()
-        pop()
-    }
-}
-
 function preload() {
     sprites['heli'] = loadImage('assets/theHelicopter.png');
     sprites['fan'] = loadImage('assets/fan.png')
@@ -328,7 +78,7 @@ function generateRescueTask(minDistance = 200, maxDistance = 200) {
         y: Math.sin(randomAngle) * randomDistance
     }
 
-    let newRescue = new HelpingPerson(this.player.x + randomPostion.x, this.player.y + randomPostion.y, 20 + Math.random() * 100, 250)
+    let newRescue = new Rescue(this.player.x + randomPostion.x, this.player.y + randomPostion.y, 20 + Math.random() * 100, 250)
     addObject(newRescue)
 }
 
@@ -551,10 +301,6 @@ function keyReleased() {
     return false;
 }
 
-function distance(x1, y1, x2, y2) {
-    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-}
-
 function touchStarted() {
     this.touch.holdX = mouseX;
     this.touch.holdY = mouseY;
@@ -570,11 +316,6 @@ function touchEnded() {
 function touchMoved() {
     this.touch.currentX = mouseX;
     this.touch.currentY = mouseY;
-}
-
-function radiansToDegrees(radians) {
-    var pi = Math.PI;
-    return radians * (180 / pi);
 }
 
 function isTouchDragged() {
