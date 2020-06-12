@@ -16,7 +16,16 @@ var touch = {
     holdX: undefined,
     holdY: undefined,
     currentX: undefined,
-    currentY: undefined
+    currentY: undefined,
+    angle: function()
+    {
+        if(isTouchDragged())
+        {
+            return Math.atan2(this.currentY - this.holdY, this.currentX - this.holdX)
+        }
+
+        return undefined
+    }
 }
 
 const controls = {
@@ -34,6 +43,9 @@ const camera = {
 function preload() 
 {
     //initGeolocation()
+
+    console.log("Procurando e carregando recursos...");
+    const lastTime = Date.now();    
     sprites['heli'] = loadImage('assets/theHelicopter.png');
     sprites['fan'] = loadImage('assets/fan.png')
     sprites['rescue'] = [
@@ -42,23 +54,33 @@ function preload()
         loadImage('assets/not_rescued.png')
     ]
     sprites['boat'] = loadImage('assets/boat.png')
+    sprites['water'] = loadImage('assets/water.png')
     soundFormats('wav');
     sounds['heli_rotor'] = loadSound('assets/heli');
     sounds['wheel'] = loadSound('assets/rolling_wheel')
+    const nowTime = Date.now();
+    console.log(`Recursos carregados! Isso levou ${nowTime - lastTime}ms!`);
+    console.log("Iniciando jogo...");
+    
 }
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
     frameRate(60);
-    //pixelDensity(1)
-    //windStrength = Math.random() * 0.5;
-    windDirectionAngle = Math.random() * Math.PI * 2;
+
+    windStrength = Math.random() * 0.6;
+    changeWindDirection()
 
     addObject(new Boat(0, 0))
     addObject(player = new Player(0, 0));
     fuel = maxFuel
     generateRescueTask()
     masterVolume(0.1)
+}
+
+function changeWindDirection()
+{
+    windDirectionAngle = Math.random() * Math.PI * 2;
 }
 
 function addObject(newGo) {
@@ -102,8 +124,10 @@ function draw() {
 }
 
 
-function logic() {
-    for (let i = 0; i < gameObjects.length; i++) {
+function logic() 
+{
+    for (let i = 0; i < gameObjects.length; i++) 
+    {
         gameObject = gameObjects[i];
         gameObject.updateObject()
 
@@ -116,6 +140,7 @@ function logic() {
 
     camera.x = -player.x;
     camera.y = -player.y;
+    
 }
 
 function render() {
@@ -212,6 +237,14 @@ function renderUI() {
         }
 
         pop()
+
+        if(isTouchDragged())
+        {
+            stroke(255, 255, 255)
+            strokeWeight(3)
+            line(touch.holdX, touch.holdY, touch.currentX, touch.currentY)
+            strokeWeight(1)
+        }
     }
 
     else {
@@ -252,6 +285,7 @@ function drawArrow(x, y, pointTo, isClose, color = { r: 0, g: 200, b: 0 }) {
         rotate(Math.atan2(y - pointTo.y, x - pointTo.x) + Math.PI / 2)
         translate(-0.5, -0.5)
         fill(color.r, color.g, color.b)
+        noStroke()
         triangle(0, 0, 1, 0, 0.5, 1)
     }
 

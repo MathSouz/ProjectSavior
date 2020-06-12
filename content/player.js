@@ -2,7 +2,7 @@ class Player extends GameObject {
     constructor(x, y) {
         super(x, y);
         this.speed = 1;
-        this.rotationSpeed = Math.PI / 180;
+        this.rotationSpeed = Math.PI / 90;
         this.fanRot = 0;
         this.fanRotSpeed = Math.PI / 5;
     }
@@ -19,8 +19,9 @@ class Player extends GameObject {
     updateObject() {
         super.updateObject();
 
-        if (isTouchHolding()) {
-            // Touching Handler
+        if (isTouchHolding()) 
+        {
+            
         }
 
         else {
@@ -28,7 +29,7 @@ class Player extends GameObject {
                 this.rotation += this.rotationSpeed * this.fanRotSpeed;
             }
 
-            if (controls.left) {
+            else if (controls.left) {
                 this.rotation -= this.rotationSpeed * this.fanRotSpeed;
             }
 
@@ -45,7 +46,7 @@ class Player extends GameObject {
             }
 
             else {
-                this.speed *= 0.01;
+                this.speed /= 1.1111111;
             }
 
             this.moveTowards()
@@ -96,7 +97,7 @@ class Player extends GameObject {
         translate(this.x, this.y);
         rotate(this.rotation + Math.PI / 2)
         translate(0, 10)
-        scale(1, 1 - (0.15 * Math.abs(this.speed)))
+        //scale(1, 1 - (0.15 * Math.abs(this.speed)))
 
         push()
         translate(-32, -32)
