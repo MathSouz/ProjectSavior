@@ -41,9 +41,6 @@ const camera = {
 }
 
 function preload() 
-{
-    //initGeolocation()
-
     console.log("Procurando e carregando recursos...");
     const lastTime = Date.now();    
     sprites['heli'] = loadImage('assets/theHelicopter.png');
