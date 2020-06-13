@@ -43,7 +43,6 @@ class InGameState extends GameState
         this.addObject(new Boat(this, 0, 0))
         this.addObject(this.player = new Player(this, 0, 0));
         this.generateRescueTask()
-        masterVolume(1)
     }
 
     changeWindDirection()
@@ -211,6 +210,14 @@ class InGameState extends GameState
             textAlign(CENTER, CENTER)
             fill(255, 255, 255)
             text(`Paused`, windowWidth / 2, windowHeight / 2);
+        }
+
+        if(muted) {
+
+            fill(255, 255, 255)
+            textAlign(RIGHT, CENTER)
+            textSize(20)
+            text('Muted', windowWidth - 20, 20)
         }
     }
 

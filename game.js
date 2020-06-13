@@ -4,6 +4,9 @@ var sounds = []
 var registeredStates = []
 var currentState = undefined;
 
+var currentMasterVolume = 1;
+var muted = false;
+
 var touch = {
     holdX: undefined,
     holdY: undefined,
@@ -94,6 +97,21 @@ function keyReleased()
     if(currentState)
     {
         currentState.onKeyReleased();
+    }
+
+    if(key === 'm')
+    {
+        muted = !muted
+
+        if(muted)
+        {
+            masterVolume(0)
+        }
+
+        else
+        {
+            masterVolume(currentMasterVolume)
+        }
     }
 
     return false;
