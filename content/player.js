@@ -1,10 +1,18 @@
 class Player extends GameObject {
-    constructor(x, y) {
-        super(x, y);
+    constructor(state, x, y) {
+        super(state, x, y);
         this.speed = 1;
         this.rotationSpeed = Math.PI / 90;
         this.fanRot = 0;
         this.fanRotSpeed = Math.PI / 5;
+
+        this.fuel = 0;
+        this.maxFuel = 10000;
+        this.peopleCarried = 0
+        this.maxPeopleCarriable = 5;
+        this.unloadingRescuesTimer = 0;
+        this.fuel = this.maxFuel
+        this.completedRescues = 0
     }
 
     onAdded() {
@@ -52,8 +60,8 @@ class Player extends GameObject {
             this.moveTowards()
         }
 
-        for (let i = 0; i < gameObjects.length; i++) {
-            const go = gameObjects[i];
+        for (let i = 0; i < this.state.gameObjects.length; i++) {
+            const go = this.state.gameObjects[i];
 
             if (go instanceof Touchable) {
                 const touchable = go;
@@ -70,8 +78,8 @@ class Player extends GameObject {
 
         this.fanRot += this.fanRotSpeed;
 
-        if (fuel > 0) {
-            fuel -= 1
+        if (this.fuel > 0) {
+            this.fuel -= 1
         }
 
         else {

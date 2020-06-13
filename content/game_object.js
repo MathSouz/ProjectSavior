@@ -1,5 +1,8 @@
-class GameObject {
-    constructor(x, y) {
+class GameObject 
+{
+    constructor(state, x, y) 
+    {
+        this.state = state;
         this.x = x;
         this.y = y;
         this.velX = 0;

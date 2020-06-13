@@ -1,6 +1,7 @@
-class Boat extends Touchable {
-    constructor(x, y, radius = 64) {
-        super(x, y);
+class Boat extends Touchable 
+{
+    constructor(state, x, y, radius = 64) {
+        super(state, x, y);
         this.radius = radius;
         this.rotation = Math.random() * Math.PI * 2;
         this.windInfluence = false
@@ -11,18 +12,18 @@ class Boat extends Touchable {
         super.updateObject();
 
         if (this.isTouching) {
-            if (peopleCarried > 0)
-                unloadingRescuesTimer++;
+            if (this.state.player.peopleCarried > 0)
+            this.state.player.unloadingRescuesTimer++;
         }
 
         else {
-            unloadingRescuesTimer = 0;
+            this.state.player.unloadingRescuesTimer = 0;
         }
 
-        if (unloadingRescuesTimer > 100) {
-            peopleCarried--;
-            completedRescues++;
-            unloadingRescuesTimer = 0;
+        if (this.state.player.unloadingRescuesTimer > 100) {
+            this.state.player.peopleCarried--;
+            this.state.player.completedRescues++;
+            this.state.player.unloadingRescuesTimer = 0;
         }
     }
 
@@ -30,7 +31,7 @@ class Boat extends Touchable {
         super.renderObject()
         push()
         translate(this.x, this.y)
-        drawLoadingCircle(0, 0, this.radius, unloadingRescuesTimer / 100, { r: 200, g: 200, b: 0 })
+        this.state.drawLoadingCircle(0, 0, this.radius, this.state.player.unloadingRescuesTimer / 100, { r: 200, g: 200, b: 0 })
         rotate(this.rotation)
         translate(-32, -32)
         noSmooth()

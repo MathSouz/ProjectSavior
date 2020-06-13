@@ -1,6 +1,6 @@
 class Rescue extends Touchable {
-    constructor(x, y, radius, enoughHelpingCounter) {
-        super(x, y);
+    constructor(state, x, y, radius, enoughHelpingCounter) {
+        super(state, x, y);
         this.radius = radius;
         this.windInfluence = false;
         this.helpingCounter = 0;
@@ -11,10 +11,15 @@ class Rescue extends Touchable {
         return this.helpingCounter / this.enoughHelpingCounter;
     }
 
+    onRescue() {
+        this.state.player.peopleCarried++;
+        this.state.generateRescueTask();
+    }
+
     updateObject() {
         super.updateObject();
 
-        if (this.isTouching && peopleCarried < maxPeopleCarriable) {
+        if (this.isTouching && this.state.player.peopleCarried < this.state.player.maxPeopleCarriable) {
             if (this.helpingCounter < this.enoughHelpingCounter) {
                 this.helpingCounter++;
                 sounds['wheel'].playMode('untilDone');
@@ -24,8 +29,8 @@ class Rescue extends Touchable {
 
             else {
                 this.helpingCounter = this.enoughHelpingCounter;
-                gameObjects.pop(this)
-                onRescue(this)
+                this.state.gameObjects.pop(this)
+                this.onRescue()
             }
         }
 
@@ -35,9 +40,10 @@ class Rescue extends Touchable {
         }
     }
 
-    renderObject() {
+    renderObject() 
+    {
         super.renderObject();
-        drawLoadingCircle(this.x, this.y, this.radius, this.getRescueProgress())
+        this.state.drawLoadingCircle(this.x, this.y, this.radius, this.getRescueProgress())
         /*push()
         translate(this.x, this.y)
         noFill()
