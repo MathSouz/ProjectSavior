@@ -30,7 +30,7 @@ class Boat extends Touchable
     renderObject() {
         super.renderObject()
         push()
-        translate(this.x, this.y)
+        translate(this.pos.x, this.pos.y)
         this.state.drawLoadingCircle(0, 0, this.radius, this.state.player.unloadingRescuesTimer / 100, { r: 200, g: 200, b: 0 })
         rotate(this.rotation)
         translate(-32, -32)

@@ -43,7 +43,7 @@ class Rescue extends Touchable {
     renderObject() 
     {
         super.renderObject();
-        this.state.drawLoadingCircle(this.x, this.y, this.radius, this.getRescueProgress())
+        this.state.drawLoadingCircle(this.pos.x, this.pos.y, this.radius, this.getRescueProgress())
         /*push()
         translate(this.x, this.y)
         noFill()

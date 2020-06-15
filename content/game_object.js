@@ -1,10 +1,11 @@
 class GameObject 
 {
-    constructor(state, x, y) 
+    constructor(state, x=0, y=0) 
     {
         this.state = state;
-        this.x = x;
-        this.y = y;
+        this.pos = new Vector(x, y);
+        //this.x = x;
+        //this.y = y;
         this.velX = 0;
         this.velY = 0;
         this.rotation = 0;
@@ -17,8 +18,8 @@ class GameObject
     }
 
     updateObject() {
-        this.x += this.velX;
-        this.y += this.velY;
+        this.pos.x += this.velX;
+        this.pos.y += this.velY;
     }
 
     renderObject() {

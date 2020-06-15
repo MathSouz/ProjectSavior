@@ -1,6 +1,8 @@
-class Player extends GameObject {
-    constructor(state, x, y) {
-        super(state, x, y);
+class Player extends GameObject 
+{
+    constructor(state) 
+    {
+        super(state);
         this.speed = 1;
         this.rotationSpeed = Math.PI / 90;
         this.fanRot = 0;
@@ -15,16 +17,19 @@ class Player extends GameObject {
         this.completedRescues = 0
     }
 
-    onAdded() {
+    onAdded() 
+    {
         super.onAdded()
     }
 
-    moveTowards() {
+    moveTowards() 
+    {
         this.velX = Math.cos(this.rotation) * this.speed * Math.min(1, this.fanRotSpeed);
         this.velY = Math.sin(this.rotation) * this.speed * Math.min(1, this.fanRotSpeed);
     }
 
-    updateObject() {
+    updateObject() 
+    {
         super.updateObject();
 
         if (isTouchHolding()) 
@@ -66,7 +71,7 @@ class Player extends GameObject {
             if (go instanceof Touchable) {
                 const touchable = go;
 
-                if (distance(this.x, this.y, touchable.x, touchable.y) < touchable.radius / 2) {
+                if (distance(this.pos.x, this.pos.y, touchable.pos.x, touchable.pos.y) < touchable.radius / 2) {
                     touchable.isTouching = true;
                 }
 
@@ -102,7 +107,7 @@ class Player extends GameObject {
         super.renderObject();
         noSmooth()
         push();
-        translate(this.x, this.y);
+        translate(this.pos.x, this.pos.y);
         rotate(this.rotation + Math.PI / 2)
         translate(0, 10)
         //scale(1, 1 - (0.15 * Math.abs(this.speed)))

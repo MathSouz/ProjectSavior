@@ -45,7 +45,8 @@ function setup()
     createCanvas(windowWidth, windowHeight);
     frameRate(60);
 
-    registeredStates.push(new InGameState())
+    //registeredStates.push(new MainMenuState());
+    registeredStates.push(new InGameState());
     currentState = registeredStates[0];
 }
 

@@ -65,7 +65,7 @@ class InGameState extends GameState
             y: Math.sin(randomAngle) * randomDistance
         }
     
-        let newRescue = new Rescue(this, this.player.x + randomPostion.x, this.player.y + randomPostion.y, 20 + Math.random() * 100, 250)
+        let newRescue = new Rescue(this, this.player.pos.x + randomPostion.x, this.player.pos.y + randomPostion.y, 20 + Math.random() * 100, 250)
         this.addObject(newRescue)
     }
 
@@ -87,13 +87,13 @@ class InGameState extends GameState
 
             if (gameObject.windInfluence) {
 
-                gameObject.x += Math.cos(this.windDirectionAngle) * this.windStrength;
-                gameObject.y += Math.sin(this.windDirectionAngle) * this.windStrength;
+                gameObject.pos.x += Math.cos(this.windDirectionAngle) * this.windStrength;
+                gameObject.pos.y += Math.sin(this.windDirectionAngle) * this.windStrength;
             }
         }
 
-        camera.x = -this.player.x;
-        camera.y = -this.player.y;
+        camera.x = -this.player.pos.x;
+        camera.y = -this.player.pos.y;
     }
 
     renderState()
@@ -118,33 +118,33 @@ class InGameState extends GameState
                 const padding = 10;
                 let isXInside = false, isYInside = false;
 
-                if (-camera.x + windowWidth / 4 - padding < hp.x) {
+                if (-camera.x + windowWidth / 4 - padding < hp.pos.x) {
                     hpx = -camera.x + windowWidth / 4 - padding;
                 }
 
-                else if (-camera.x - windowWidth / 4 + padding > hp.x) {
+                else if (-camera.x - windowWidth / 4 + padding > hp.pos.x) {
                     hpx = -camera.x - windowWidth / 4 + padding;
                 }
 
                 else {
-                    hpx = hp.x
+                    hpx = hp.pos.x
                     isXInside = true;
                 }
 
-                if (-camera.y + windowHeight / 4 - padding < hp.y) {
+                if (-camera.y + windowHeight / 4 - padding < hp.pos.y) {
                     hpy = -camera.y + windowHeight / 4 - padding;
                 }
 
-                else if (-camera.y - windowHeight / 4 + padding > hp.y) {
+                else if (-camera.y - windowHeight / 4 + padding > hp.pos.y) {
                     hpy = -camera.y - windowHeight / 4 + padding;
                 }
 
                 else {
-                    hpy = hp.y
+                    hpy = hp.pos.y
                     isYInside = true
                 }
 
-                this.drawArrow(hpx, hpy, { x: hp.x, y: hp.y }, isXInside && isYInside, { r: go.iconColor.r, g: go.iconColor.g, b: go.iconColor.b })
+                this.drawArrow(hpx, hpy, { x: hp.pos.x, y: hp.pos.y }, isXInside && isYInside, { r: go.iconColor.r, g: go.iconColor.g, b: go.iconColor.b })
             }
         }
 
@@ -241,6 +241,7 @@ class InGameState extends GameState
     }
     
     drawArrow(x, y, pointTo, isClose, color = { r: 0, g: 200, b: 0 }) {
+        
         push()
         translate(x, y)
         scale(10, 10)

@@ -9,7 +9,7 @@ function distance(x1, y1, x2, y2) {
 
 class Vector
 {
-    constructor(x, y)
+    constructor(x=0, y=0)
     {
         this.x = x;
         this.y = y;
