@@ -1,7 +1,5 @@
-class Player extends GameObject 
-{
-    constructor(state) 
-    {
+class Player extends GameObject {
+    constructor(state) {
         super(state);
         this.speed = 1;
         this.rotationSpeed = Math.PI / 90;
@@ -17,27 +15,19 @@ class Player extends GameObject
         this.completedRescues = 0
     }
 
-    onAdded() 
-    {
+    onAdded() {
         super.onAdded()
     }
 
-    moveTowards() 
-    {
+    moveTowards() {
         this.velX = Math.cos(this.rotation) * this.speed * Math.min(1, this.fanRotSpeed);
         this.velY = Math.sin(this.rotation) * this.speed * Math.min(1, this.fanRotSpeed);
     }
 
-    updateObject() 
-    {
+    updateObject() {
         super.updateObject();
 
-        if (isTouchHolding()) 
-        {
-            
-        }
-
-        else {
+        if (this.state.controlMode == KEYBOARD_MODE) {
             if (controls.right) {
                 this.rotation += this.rotationSpeed * this.fanRotSpeed;
             }
@@ -59,11 +49,29 @@ class Player extends GameObject
             }
 
             else {
-                this.speed /= 1.1111111;
+                this.speed /= 1.1111111
+            }
+        }
+
+        else {
+            // Consertar o Hard Rotation.
+            if (touch.isTouchDragged()) {
+                this.rotation = touch.getAngle()
+                let touchMag = touch.getLength();
+
+                if (this.speed < 1) {
+                    this.speed += (Math.min(100, touchMag) / 100) * 0.01;
+                }
+
+                this.moveTowards();
             }
 
-            this.moveTowards()
+            else {
+                this.speed /= 1.111111
+            }
         }
+
+        this.moveTowards();
 
         for (let i = 0; i < this.state.gameObjects.length; i++) {
             const go = this.state.gameObjects[i];
@@ -110,13 +118,10 @@ class Player extends GameObject
         translate(this.pos.x, this.pos.y);
         rotate(this.rotation + Math.PI / 2)
         translate(0, 10)
-        //scale(1, 1 - (0.15 * Math.abs(this.speed)))
-
         push()
         translate(-32, -32)
         image(sprites['heli'], 0, 0)
         pop()
-
         push()
         translate(0, -10)
         rotate(this.fanRot)

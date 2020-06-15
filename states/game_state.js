@@ -1,35 +1,54 @@
-class GameState
-{
-    updateState()
-    {
-        
+class ControleMode {
+    constructor(name) {
+        this.name = name;
+    }
+}
+
+const KEYBOARD_MODE = new ControleMode('Keyboard Mode');
+const CURSOR_MODE = new ControleMode('Touch Mode');
+
+class GameState {
+    constructor() {
+        this.controlMode = KEYBOARD_MODE;
     }
 
-    renderState()
-    {
+    updateState() {
+        if (this.controlMode == KEYBOARD_MODE) {
+            noCursor();
+        }
+
+        else {
+            cursor(ARROW)
+        }
+    }
+
+    renderState() {
 
     }
 
-    renderUIState()
-    {
+    renderUIState() {
 
     }
 
-    onKeyPressed()
-    {
+    onKeyPressed() {
+        if (this.pause) {
+            if (key === 'k') {
+                this.controlMode = KEYBOARD_MODE;
+            }
 
+            else if (key === 'c') {
+                this.controlMode = CURSOR_MODE;
+            }
+        }
     }
 
-    onKeyReleased()
-    {
+    onKeyReleased() {
 
     }
 }
 
-class InGameState extends GameState
-{
-    constructor()
-    {
+class InGameState extends GameState {
+    constructor() {
         super();
         this.gameObjects = []
         this.player;
@@ -45,13 +64,11 @@ class InGameState extends GameState
         this.generateRescueTask()
     }
 
-    changeWindDirection()
-    {
+    changeWindDirection() {
         this.windDirectionAngle = Math.random() * Math.PI * 2;
     }
 
-    addObject(newGo) 
-    {
+    addObject(newGo) {
         this.gameObjects.push(newGo);
         newGo.onAdded();
     }
@@ -59,20 +76,18 @@ class InGameState extends GameState
     generateRescueTask(minDistance = 200, maxDistance = 200) {
         let randomAngle = Math.random() * Math.PI * 2;
         let randomDistance = minDistance + Math.random() * maxDistance;
-    
+
         let randomPostion = {
             x: Math.cos(randomAngle) * randomDistance,
             y: Math.sin(randomAngle) * randomDistance
         }
-    
+
         let newRescue = new Rescue(this, this.player.pos.x + randomPostion.x, this.player.pos.y + randomPostion.y, 20 + Math.random() * 100, 250)
         this.addObject(newRescue)
     }
 
-    updateState()
-    {
-        if(this.pause)
-        {
+    updateState() {
+        if (this.pause) {
             sounds['heli_rotor'].pause()
             sounds['wheel'].pause()
             return;
@@ -80,13 +95,11 @@ class InGameState extends GameState
 
         super.updateState()
 
-        for (let i = 0; i < this.gameObjects.length; i++) 
-        {
+        for (let i = 0; i < this.gameObjects.length; i++) {
             let gameObject = this.gameObjects[i];
             gameObject.updateObject()
 
             if (gameObject.windInfluence) {
-
                 gameObject.pos.x += Math.cos(this.windDirectionAngle) * this.windStrength;
                 gameObject.pos.y += Math.sin(this.windDirectionAngle) * this.windStrength;
             }
@@ -96,8 +109,7 @@ class InGameState extends GameState
         camera.y = -this.player.pos.y;
     }
 
-    renderState()
-    {
+    renderState() {
         super.renderState()
         push()
         translate(windowWidth / 2, windowHeight / 2)
@@ -151,8 +163,7 @@ class InGameState extends GameState
         pop()
     }
 
-    renderUIState()
-    {
+    renderUIState() {
         textFont('Trebuchet MS');
         noStroke()
         fill(255)
@@ -194,8 +205,7 @@ class InGameState extends GameState
 
             pop()
 
-            if(isTouchDragged())
-            {
+            if (isTouchDragged() && this.controlMode == CURSOR_MODE) {
                 stroke(255, 255, 255)
                 strokeWeight(3)
                 line(touch.holdX, touch.holdY, touch.currentX, touch.currentY)
@@ -210,9 +220,19 @@ class InGameState extends GameState
             textAlign(CENTER, CENTER)
             fill(255, 255, 255)
             text(`Paused`, windowWidth / 2, windowHeight / 2);
+
+            textSize(18)
+            push()
+            translate(windowWidth - 10, windowHeight - 10);
+            textAlign(RIGHT, BOTTOM);
+            noStroke()
+            fill(255)
+            textStyle(ITALIC)
+            text(`Control Mode: ${this.controlMode.name}`, 0, 0)
+            pop()
         }
 
-        if(muted) {
+        if (muted) {
 
             fill(255, 255, 255)
             textAlign(RIGHT, CENTER)
@@ -228,24 +248,24 @@ class InGameState extends GameState
         stroke(255, 255, 255)
         strokeWeight(2)
         circle(0, 0, radius)
-    
+
         if (progress > 0) {
             noFill()
             strokeWeight(3)
             stroke(forecolor.r, forecolor.g, forecolor.b)
             arc(0, 0, radius, radius, 0, Math.PI * 2 * progress, OPEN)
         }
-    
+
         strokeWeight(1)
         pop()
     }
-    
+
     drawArrow(x, y, pointTo, isClose, color = { r: 0, g: 200, b: 0 }) {
-        
+
         push()
         translate(x, y)
         scale(10, 10)
-    
+
         if (!isClose) {
             rotate(Math.atan2(y - pointTo.y, x - pointTo.x) + Math.PI / 2)
             translate(-0.5, -0.5)
@@ -253,47 +273,46 @@ class InGameState extends GameState
             noStroke()
             triangle(0, 0, 1, 0, 0.5, 1)
         }
-    
+
         pop()
     }
 
-    onKeyPressed()
-    {
+    onKeyPressed() {
+        super.onKeyPressed();
         if (key === 'w') {
             controls.up = true;
         }
-    
+
         if (key === 'd') {
             controls.right = true;
         }
-    
+
         if (key === 's') {
             controls.down = true;
         }
-    
+
         if (key === 'a') {
             controls.left = true;
         }
     }
 
-    onKeyReleased()
-    {
+    onKeyReleased() {
         if (key === 'w') {
             controls.up = false;
         }
-    
+
         if (key === 'd') {
             controls.right = false;
         }
-    
+
         if (key === 's') {
             controls.down = false;
         }
-    
+
         if (key === 'a') {
             controls.left = false;
         }
-    
+
         if (keyCode === 32) {
             this.pause = !this.pause
         }

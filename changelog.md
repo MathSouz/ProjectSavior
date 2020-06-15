@@ -5,4 +5,4 @@
 
 15/06/2020
 
-- A posição dos objetos foram trocadas de coordenadas brutas x, y para vetores.
+- Adicionado os modos de controle: Teclado ou Cursor.
