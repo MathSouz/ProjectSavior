@@ -36,6 +36,11 @@ class Rescue extends Touchable {
     onRescue() {
         this.state.player.peopleCarried++;
         this.state.generateRescueTask();
+
+        if(Math.floor(Math.random() * 5) == 0)
+        {
+            this.state.changeWindDirection();
+        }
     }
 
     updateObject() {
@@ -45,9 +50,9 @@ class Rescue extends Touchable {
         {
             if (this.helpingCounter < this.enoughHelpingCounter) {
                 this.helpingCounter++;
+                // Bug: rolling_wheel.wav não reproduz.
                 sounds['wheel'].playMode('untilDone');
-                sounds['wheel'].setVolume(4)
-                sounds['wheel'].play()
+                sounds['wheel'].play();
             }
 
             else {

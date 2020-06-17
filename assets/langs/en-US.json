@@ -1,0 +1,12 @@
+{
+    "lang": "English",
+    "translations": {
+        "rescues": "Rescues",
+        "fuel": "Fuel",
+        "paused": "Paused",
+        "controlMode": "Input Mode",
+        "keyboard": "Keyboard",
+        "mouseOrTouch": "Mouse or Touch",
+        "help": "Help"
+    }
+}

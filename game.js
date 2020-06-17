@@ -15,8 +15,26 @@ const camera = {
     y: 0
 }
 
-function preload() {
+function preload() 
+{
     loadResources()
+}
+
+function isMobileDevice()
+{
+    const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+
+    return toMatch.some((toMatchItem) => {
+        return navigator.userAgent.match(toMatchItem);
+    });
 }
 
 function setup() {
@@ -32,6 +50,7 @@ function setup() {
 
 function draw() {
     background(0);
+    textFont(GAME_FONT)
     logic()
     render()
     renderUI()
@@ -39,6 +58,7 @@ function draw() {
 
 
 function logic() {
+    
     if (currentState) {
         currentState.updateState();
     }

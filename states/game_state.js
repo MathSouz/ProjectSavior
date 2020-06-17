@@ -9,7 +9,7 @@ const CURSOR_MODE = new ControleMode('Mouse / Toque');
 
 class GameState {
     constructor() {
-        this.controlMode = KEYBOARD_MODE;
+        this.controlMode = isMobileDevice() ? CURSOR_MODE : KEYBOARD_MODE;
     }
 
     updateState() {
@@ -56,8 +56,8 @@ class InGameState extends GameState {
         this.windStrength = 0;
         this.pause = false;
 
-        this.windStrength = Math.random() * 0.4;
-        this.changeWindDirection()
+        this.windStrength = 0.2 + Math.random() * 0.2;
+        this.changeWindDirection();
 
         this.addObject(new Boat(this, 0, 0))
         this.addObject(this.player = new Player(this, 0, 0));
@@ -93,9 +93,17 @@ class InGameState extends GameState {
 
     updateState() {
         if (this.pause) {
+
+            for(var s in sounds)
+            {
+                if(sounds.hasOwnProperty(s))
+                {
+                    sounds[s].pause()
+                    //sounds['wheel'].pause()
+                }
+            }
             // Temporário. Implementar uma iteração para pausar todos os sons.
-            sounds['heli_rotor'].pause()
-            sounds['wheel'].pause()
+            
             return;
         }
 
@@ -141,7 +149,8 @@ class InGameState extends GameState {
         rect(0, 0, windowWidth, windowHeight);
         push()
         translate(windowWidth / 2, windowHeight / 2)
-        scale(2, 2)
+        const gameScale = isMobileDevice() ? 4 : 2;
+        scale(gameScale, gameScale)
         translate(camera.x, camera.y)
 
         for (let i = 0; i < this.gameObjects.length; i++) {
@@ -194,15 +203,14 @@ class InGameState extends GameState {
     }
 
     renderUIState() {
-        textFont('Trebuchet MS');
         noStroke()
         fill(255)
 
         if (!this.pause) {
-            textSize(20)
+            textSize(16)
             textAlign(LEFT, CENTER)
             text(`Resgates: ${this.player.completedRescues}`, 20, 20)
-            text('Combustível: ', 20, 20 + 30);
+            text('Combustivel: ', 20, 20 + 30);
 
             fill(0, 190, 0)
             rect(20, 20 + 50, 200, 10)

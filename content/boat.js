@@ -40,6 +40,11 @@ class Boat extends Touchable
             this.state.player.peopleCarried--;
             this.state.player.completedRescues++;
             this.state.player.unloadingRescuesTimer = 0;
+
+            if(Math.floor(Math.random() * 5) == 0)
+            {
+                this.state.changeWindDirection();
+            }
         }
     }
 

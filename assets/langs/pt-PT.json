@@ -1,0 +1,12 @@
+{
+    "lang": "Português",
+    "translations": {
+        "rescues": "Resgates",
+        "fuel": "Combustível",
+        "paused": "Pause",
+        "controlMode": "Modo de Controle",
+        "keyboard": "Teclado",
+        "mouseOrTouch": "Mouse ou Teclado",
+        "help": "Socorro"
+    }
+}
