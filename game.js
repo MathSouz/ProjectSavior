@@ -22,6 +22,7 @@ function preload() {
 function setup() {
     createCanvas(windowWidth, windowHeight);
     frameRate(60);
+    angleMode(RADIANS);
     touch = new Touch();
     controls = new Controls();
     //registeredStates.push(new MainMenuState());

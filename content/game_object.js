@@ -7,6 +7,19 @@ class GameObject {
         this.rotation = 0;
         this.windInfluence = true;
         this.iconColor = { r: 0, g: 200, b: 0 }
+        this.dead = false;
+        this.tickAlive = 0;
+        this.zOrder = 0;
+    }
+
+    kill()
+    {
+        this.dead = true;
+    }
+
+    onDead()
+    {
+
     }
 
     lookAt(x, y) {
@@ -18,11 +31,13 @@ class GameObject {
     }
 
     updateObject() {
+        this.tickAlive++;
         this.pos.x += this.velX;
         this.pos.y += this.velY;
     }
 
-    renderObject() {
+    renderObject() 
+    {
         color(0, 0, 0)
     }
 }

@@ -6,6 +6,22 @@ class Boat extends Touchable
         this.rotation = Math.random() * Math.PI * 2;
         this.windInfluence = false
         this.iconColor = { r: 200, g: 200, b: 0 }
+        this.zOrder = 1;
+        this.waves;
+    }
+
+    onAdded()
+    {
+        super.onAdded();
+        this.waves = this.state.addObject(new Waves(this.state, this.pos.x, this.pos.y, this.radius));
+    }
+
+    onDead()
+    {
+        if(this.waves)
+        {
+            this.waves.kill();
+        }
     }
 
     updateObject() {
@@ -31,7 +47,8 @@ class Boat extends Touchable
         super.renderObject()
         push()
         translate(this.pos.x, this.pos.y)
-        this.state.drawLoadingCircle(0, 0, this.radius, this.state.player.unloadingRescuesTimer / 100, { r: 200, g: 200, b: 0 })
+        if(this.isTouching)
+            this.state.drawLoadingCircle(0, 0, this.radius, this.state.player.unloadingRescuesTimer / 100, { r: 200, g: 200, b: 0 })
         rotate(this.rotation)
         translate(-32, -32)
         noSmooth()

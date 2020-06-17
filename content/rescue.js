@@ -5,6 +5,28 @@ class Rescue extends Touchable {
         this.windInfluence = false;
         this.helpingCounter = 0;
         this.enoughHelpingCounter = enoughHelpingCounter;
+        this.waves;
+        this.helpMsg;
+    }
+
+    onAdded()
+    {
+        super.onAdded();
+        this.waves = this.state.addObject(new Waves(this.state, this.pos.x, this.pos.y, this.radius));
+        this.helpMsg = this.state.addObject(new Messages(this.state, this.pos.x, this.pos.y, 'Socorro!'));
+    }
+
+    onDead()
+    {
+        if(this.waves)
+        {
+            this.waves.kill();
+        }
+
+        if(this.helpMsg)
+        {
+            this.helpMsg.kill();
+        }
     }
 
     getRescueProgress() {
@@ -19,7 +41,8 @@ class Rescue extends Touchable {
     updateObject() {
         super.updateObject();
 
-        if (this.isTouching && this.state.player.peopleCarried < this.state.player.maxPeopleCarriable) {
+        if (this.isTouching && this.state.player.peopleCarried < this.state.player.maxPeopleCarriable)
+        {
             if (this.helpingCounter < this.enoughHelpingCounter) {
                 this.helpingCounter++;
                 sounds['wheel'].playMode('untilDone');
@@ -29,7 +52,7 @@ class Rescue extends Touchable {
 
             else {
                 this.helpingCounter = this.enoughHelpingCounter;
-                this.state.gameObjects.pop(this)
+                this.kill()
                 this.onRescue()
             }
         }
@@ -42,25 +65,9 @@ class Rescue extends Touchable {
 
     renderObject() 
     {
+        if(this.isTouching)
+            this.state.drawLoadingCircle(this.pos.x, this.pos.y, this.radius, this.getRescueProgress())
+
         super.renderObject();
-        this.state.drawLoadingCircle(this.pos.x, this.pos.y, this.radius, this.getRescueProgress())
-        /*push()
-        translate(this.x, this.y)
-        noFill()
-
-        stroke(255, 255, 255)
-        strokeWeight(2)
-        circle(0, 0, this.radius)
-
-        if (this.getHelpingProgress() > 0) {
-            noFill()
-            strokeWeight(3)
-            stroke(0, 255, 0)
-            arc(0, 0, this.radius, this.radius, 0, Math.PI * 2 * this.getHelpingProgress(), OPEN)
-        }
-
-        strokeWeight(1)
-
-        pop();*/
     }
 }

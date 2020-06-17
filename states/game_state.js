@@ -4,8 +4,8 @@ class ControleMode {
     }
 }
 
-const KEYBOARD_MODE = new ControleMode('Keyboard Mode');
-const CURSOR_MODE = new ControleMode('Touch Mode');
+const KEYBOARD_MODE = new ControleMode('Teclado');
+const CURSOR_MODE = new ControleMode('Mouse / Toque');
 
 class GameState {
     constructor() {
@@ -61,7 +61,9 @@ class InGameState extends GameState {
 
         this.addObject(new Boat(this, 0, 0))
         this.addObject(this.player = new Player(this, 0, 0));
-        this.generateRescueTask()
+
+        for(let i = 0; i < 5; i++)
+            this.generateRescueTask();
     }
 
     changeWindDirection() {
@@ -71,8 +73,10 @@ class InGameState extends GameState {
     addObject(newGo) {
         this.gameObjects.push(newGo);
         newGo.onAdded();
+        return newGo;
     }
 
+    // Bug: O Rescue Task não deve ser criado dentro da área de outro.
     generateRescueTask(minDistance = 200, maxDistance = 200) {
         let randomAngle = Math.random() * Math.PI * 2;
         let randomDistance = minDistance + Math.random() * maxDistance;
@@ -82,26 +86,48 @@ class InGameState extends GameState {
             y: Math.sin(randomAngle) * randomDistance
         }
 
-        let newRescue = new Rescue(this, this.player.pos.x + randomPostion.x, this.player.pos.y + randomPostion.y, 20 + Math.random() * 100, 250)
-        this.addObject(newRescue)
+        let newPos = {x: this.player.pos.x + randomPostion.x, y: this.player.pos.y + randomPostion.y}
+        let newRescue = new Rescue(this, newPos.x, newPos.y, 20 + Math.random() * 10, 325)
+        this.addObject(newRescue);
     }
 
     updateState() {
         if (this.pause) {
+            // Temporário. Implementar uma iteração para pausar todos os sons.
             sounds['heli_rotor'].pause()
             sounds['wheel'].pause()
             return;
         }
 
-        super.updateState()
+        super.updateState();
+
+        // Organiza a array de gameObjects para que os tiverem o zOrder menor sejam renderizados antes, ou seja, fiquem por baixo.
+        // Pode não ser bom para performace pois toda a array é reorganizada a cada frame.
+
+        this.gameObjects.sort((a, b) => {
+            return a.zOrder - b.zOrder;
+        })
 
         for (let i = 0; i < this.gameObjects.length; i++) {
-            let gameObject = this.gameObjects[i];
-            gameObject.updateObject()
+            const gameObject = this.gameObjects[i];
 
-            if (gameObject.windInfluence) {
-                gameObject.pos.x += Math.cos(this.windDirectionAngle) * this.windStrength;
-                gameObject.pos.y += Math.sin(this.windDirectionAngle) * this.windStrength;
+            if(gameObject)
+            {
+                if(gameObject.dead)
+                {
+                    gameObject.onDead();
+                    this.gameObjects.splice(i, 1);
+                }
+    
+                else
+                {
+                    gameObject.updateObject();
+    
+                    if (gameObject.windInfluence) {
+                        gameObject.pos.x += Math.cos(this.windDirectionAngle) * this.windStrength;
+                        gameObject.pos.y += Math.sin(this.windDirectionAngle) * this.windStrength;
+                    }
+                }
             }
         }
 
@@ -111,6 +137,8 @@ class InGameState extends GameState {
 
     renderState() {
         super.renderState()
+        fill(0, 0, 180)
+        rect(0, 0, windowWidth, windowHeight);
         push()
         translate(windowWidth / 2, windowHeight / 2)
         scale(2, 2)
@@ -121,6 +149,8 @@ class InGameState extends GameState {
             gameObject.renderObject()
         }
 
+        // Desenha flechas na tela para apontar onde estão os pontos de resgastes. 
+        // Ao mesmo tempo que restringe suas posições de acordo com a camera, mantendo-as sempre na visão da câmera.
         for (let i = 0; i < this.gameObjects.length; i++) {
             const go = this.gameObjects[i];
 
@@ -171,8 +201,8 @@ class InGameState extends GameState {
         if (!this.pause) {
             textSize(20)
             textAlign(LEFT, CENTER)
-            text(`Rescues: ${this.player.completedRescues}`, 20, 20)
-            text('Fuel: ', 20, 20 + 30);
+            text(`Resgates: ${this.player.completedRescues}`, 20, 20)
+            text('Combustível: ', 20, 20 + 30);
 
             fill(0, 190, 0)
             rect(20, 20 + 50, 200, 10)
@@ -219,7 +249,7 @@ class InGameState extends GameState {
             textSize(72)
             textAlign(CENTER, CENTER)
             fill(255, 255, 255)
-            text(`Paused`, windowWidth / 2, windowHeight / 2);
+            text(`Pause`, windowWidth / 2, windowHeight / 2);
 
             textSize(18)
             push()
@@ -228,7 +258,7 @@ class InGameState extends GameState {
             noStroke()
             fill(255)
             textStyle(ITALIC)
-            text(`Control Mode: ${this.controlMode.name}`, 0, 0)
+            text(`Modo de Controle: ${this.controlMode.name}`, 0, 0)
             pop()
         }
 
@@ -237,7 +267,7 @@ class InGameState extends GameState {
             fill(255, 255, 255)
             textAlign(RIGHT, CENTER)
             textSize(20)
-            text('Muted', windowWidth - 20, 20)
+            text('Mudo', windowWidth - 20, 20)
         }
     }
 

@@ -13,6 +13,8 @@ class Player extends GameObject {
         this.unloadingRescuesTimer = 0;
         this.fuel = this.maxFuel
         this.completedRescues = 0
+
+        this.zOrder = 2;
     }
 
     onAdded() {

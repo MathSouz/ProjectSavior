@@ -1,1 +1,6 @@
-- Adicionado os modos de controle: Teclado ou Cursor.
+- Bug Corrigido: As tarefas de resgates ficam por cima do helicópero e do barco.
+- O plano de fundo é azul. (R: 0, G: 0, B: 180)
+- O raio da tarefa de resgate diminuiu, de mínimo 20 e máximo 120, para mínimo de 20 e máximo de 30;
+- O tempo de resgate aumentou de de 250 para 325.
+- Barcos e tarefas de resgate possuem efeitos de ondas no mar.
+- Tarefas de resgate possuem efeitos de mensagem 'Socorro!'.
