@@ -1,1 +1,3 @@
-- Fonte customizada adicionada.
+- Novos sons adicionados.
+- Sons de fundo adicionados.
+- Sistema de idiomas adicionado, porém imanipulável.

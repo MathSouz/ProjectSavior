@@ -13,7 +13,8 @@ class Rescue extends Touchable {
     {
         super.onAdded();
         this.waves = this.state.addObject(new Waves(this.state, this.pos.x, this.pos.y, this.radius));
-        this.helpMsg = this.state.addObject(new Messages(this.state, this.pos.x, this.pos.y, 'Socorro!'));
+        this.helpMsg = this.state.addObject(new Messages(this.state, this.pos.x, this.pos.y, 'help'));
+        this.helpMsg.textConfig.size = 4;
     }
 
     onDead()
@@ -41,6 +42,8 @@ class Rescue extends Touchable {
         {
             this.state.changeWindDirection();
         }
+
+        sounds['sucess'].play();
     }
 
     updateObject() {
@@ -50,9 +53,6 @@ class Rescue extends Touchable {
         {
             if (this.helpingCounter < this.enoughHelpingCounter) {
                 this.helpingCounter++;
-                // Bug: rolling_wheel.wav não reproduz.
-                sounds['wheel'].playMode('untilDone');
-                sounds['wheel'].play();
             }
 
             else {
@@ -64,7 +64,6 @@ class Rescue extends Touchable {
 
         else {
             this.helpingCounter = 0;
-            sounds['wheel'].stop()
         }
     }
 

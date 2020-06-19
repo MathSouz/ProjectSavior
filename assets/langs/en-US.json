@@ -1,5 +1,6 @@
 {
     "lang": "English",
+    "locale": "en-US",
     "translations": {
         "rescues": "Rescues",
         "fuel": "Fuel",
@@ -7,6 +8,6 @@
         "controlMode": "Input Mode",
         "keyboard": "Keyboard",
         "mouseOrTouch": "Mouse or Touch",
-        "help": "Help"
+        "help": "Help!"
     }
 }

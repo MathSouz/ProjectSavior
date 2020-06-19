@@ -6,12 +6,11 @@ class Player extends GameObject {
         this.fanRot = 0;
         this.fanRotSpeed = Math.PI / 5;
 
-        this.fuel = 0;
         this.maxFuel = 10000;
+        this.fuel = this.maxFuel;
         this.peopleCarried = 0
         this.maxPeopleCarriable = 5;
         this.unloadingRescuesTimer = 0;
-        this.fuel = this.maxFuel
         this.completedRescues = 0
 
         this.zOrder = 2;
@@ -19,6 +18,7 @@ class Player extends GameObject {
 
     onAdded() {
         super.onAdded()
+        sounds['rotor'].play(true);
     }
 
     moveTowards() {
@@ -104,12 +104,7 @@ class Player extends GameObject {
                 this.fanRotSpeed = 0;
             }
 
-            sounds['heli_rotor'].rate(this.fanRotSpeed);
-        }
-
-        if (this.fanRotSpeed > 0) {
-            sounds['heli_rotor'].playMode('untilDone');
-            sounds['heli_rotor'].play()
+            sounds['rotor'].setRate(this.fanRotSpeed);
         }
     }
 

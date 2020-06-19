@@ -45,6 +45,8 @@ class Boat extends Touchable
             {
                 this.state.changeWindDirection();
             }
+
+            sounds['rescue'].play();
         }
     }
 

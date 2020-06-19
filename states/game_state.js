@@ -4,8 +4,8 @@ class ControleMode {
     }
 }
 
-const KEYBOARD_MODE = new ControleMode('Teclado');
-const CURSOR_MODE = new ControleMode('Mouse / Toque');
+const KEYBOARD_MODE = new ControleMode('keyboard');
+const CURSOR_MODE = new ControleMode('mouseOrTouch');
 
 class GameState {
     constructor() {
@@ -62,8 +62,11 @@ class InGameState extends GameState {
         this.addObject(new Boat(this, 0, 0))
         this.addObject(this.player = new Player(this, 0, 0));
 
-        for(let i = 0; i < 5; i++)
+        for (let i = 0; i < 5; i++)
             this.generateRescueTask();
+
+        this.backgroundSong = sounds['song_3'];
+        this.backgroundSong.play(true);
     }
 
     changeWindDirection() {
@@ -86,61 +89,47 @@ class InGameState extends GameState {
             y: Math.sin(randomAngle) * randomDistance
         }
 
-        let newPos = {x: this.player.pos.x + randomPostion.x, y: this.player.pos.y + randomPostion.y}
+        let newPos = { x: this.player.pos.x + randomPostion.x, y: this.player.pos.y + randomPostion.y }
         let newRescue = new Rescue(this, newPos.x, newPos.y, 20 + Math.random() * 10, 325)
         this.addObject(newRescue);
     }
 
     updateState() {
-        if (this.pause) {
-
-            for(var s in sounds)
-            {
-                if(sounds.hasOwnProperty(s))
-                {
-                    sounds[s].pause()
-                    //sounds['wheel'].pause()
-                }
-            }
-            // Temporário. Implementar uma iteração para pausar todos os sons.
-            
-            return;
-        }
-
-        super.updateState();
-
-        // Organiza a array de gameObjects para que os tiverem o zOrder menor sejam renderizados antes, ou seja, fiquem por baixo.
-        // Pode não ser bom para performace pois toda a array é reorganizada a cada frame.
-
-        this.gameObjects.sort((a, b) => {
-            return a.zOrder - b.zOrder;
-        })
-
-        for (let i = 0; i < this.gameObjects.length; i++) {
-            const gameObject = this.gameObjects[i];
-
-            if(gameObject)
-            {
-                if(gameObject.dead)
-                {
-                    gameObject.onDead();
-                    this.gameObjects.splice(i, 1);
-                }
+        if(!this.pause)
+        {
+            super.updateState();
     
-                else
-                {
-                    gameObject.updateObject();
+            // Organiza a array de gameObjects para que os tiverem o zOrder menor sejam renderizados antes, ou seja, fiquem por baixo.
+            // Pode não ser bom para performace pois toda a array é reorganizada a cada frame.
     
-                    if (gameObject.windInfluence) {
-                        gameObject.pos.x += Math.cos(this.windDirectionAngle) * this.windStrength;
-                        gameObject.pos.y += Math.sin(this.windDirectionAngle) * this.windStrength;
+            this.gameObjects.sort((a, b) => {
+                return a.zOrder - b.zOrder;
+            })
+    
+            for (let i = 0; i < this.gameObjects.length; i++) {
+                const gameObject = this.gameObjects[i];
+    
+                if (gameObject) {
+                    if (gameObject.dead) {
+                        gameObject.onDead();
+                        this.gameObjects.splice(i, 1);
+                    }
+    
+                    else {
+                        gameObject.updateObject();
+    
+                        if (gameObject.windInfluence) {
+                            gameObject.pos.x += Math.cos(this.windDirectionAngle) * this.windStrength;
+                            gameObject.pos.y += Math.sin(this.windDirectionAngle) * this.windStrength;
+                        }
                     }
                 }
             }
+    
+            camera.x = -this.player.pos.x;
+            camera.y = -this.player.pos.y;
         }
 
-        camera.x = -this.player.pos.x;
-        camera.y = -this.player.pos.y;
     }
 
     renderState() {
@@ -209,8 +198,8 @@ class InGameState extends GameState {
         if (!this.pause) {
             textSize(16)
             textAlign(LEFT, CENTER)
-            text(`Resgates: ${this.player.completedRescues}`, 20, 20)
-            text('Combustivel: ', 20, 20 + 30);
+            text(`${getTranslation('rescues')}: ${this.player.completedRescues}`, 20, 20)
+            text(`${getTranslation('fuel')}: `, 20, 20 + 30);
 
             fill(0, 190, 0)
             rect(20, 20 + 50, 200, 10)
@@ -257,7 +246,7 @@ class InGameState extends GameState {
             textSize(72)
             textAlign(CENTER, CENTER)
             fill(255, 255, 255)
-            text(`Pause`, windowWidth / 2, windowHeight / 2);
+            text(`${getTranslation('paused')}`, windowWidth / 2, windowHeight / 2);
 
             textSize(18)
             push()
@@ -266,7 +255,7 @@ class InGameState extends GameState {
             noStroke()
             fill(255)
             textStyle(ITALIC)
-            text(`Modo de Controle: ${this.controlMode.name}`, 0, 0)
+            text(`${getTranslation('controlMode')}: ${getTranslation(this.controlMode.name) }`, 0, 0)
             pop()
         }
 
@@ -352,7 +341,45 @@ class InGameState extends GameState {
         }
 
         if (keyCode === 32) {
-            this.pause = !this.pause
+            this.pause = !this.pause;
+            this.onPause()
+        }
+    }
+
+    onPause()
+    {
+        sounds['sucess'].play();
+
+        for (const s in sounds) 
+        {
+            if (sounds.hasOwnProperty(s)) {
+                const sound = sounds[s];
+
+                if(this.pause)
+                {
+                    if(sound.pausable)
+                        sound.pause();
+
+                    if(sound.isBackground)
+                    {
+                        sound.setVolume(0.25);
+                    }
+                }
+
+                else
+                {
+                    if(sound.sound.isPaused())
+                    {
+                        sound.play();
+                    }
+
+                    if(sound.isBackground)
+                    {
+                        sound.resetVolume()
+                    }
+                }
+                
+            }
         }
     }
 }

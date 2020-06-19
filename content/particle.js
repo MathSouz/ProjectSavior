@@ -56,13 +56,15 @@ class Messages extends Particle
         {
             push()
             translate(this.pos.x, this.pos.y);
-            translate(Math.cos(this.angleDisplacement) * Math.abs(Math.sin(this.animTimer / 7.5)) * this.maxLoopTime, Math.sin(this.angleDisplacement) * Math.abs(Math.sin(this.animTimer / 7.5)) * this.maxLoopTime);
+            translate(
+                Math.cos(this.angleDisplacement) * Math.abs(Math.sin(this.animTimer / 7.5)) * this.maxLoopTime, 
+                Math.sin(this.angleDisplacement) * Math.abs(Math.sin(this.animTimer / 7.5)) * this.maxLoopTime);
             rotate(this.angleDisplacement + Math.PI / 2);
             textSize(this.textConfig.size);
             noStroke()
             fill(this.textConfig.color[0], this.textConfig.color[1], this.textConfig.color[2])
             textAlign(this.textConfig.align[0], this.textConfig.align[1])
-            text(this.msg, 0, 0);
+            text(getTranslation(this.msg), 0, 0);
             pop()
         }
     }

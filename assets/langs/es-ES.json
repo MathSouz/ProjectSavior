@@ -1,5 +1,6 @@
 {
-    "lang": "Español",
+    "lang": "Espanol",
+    "locale": "es-ES",
     "translations": {
         "rescues": "Rescata",
         "fuel": "Combustible",
@@ -7,6 +8,6 @@
         "controlMode": "Modo de Entrada",
         "keyboard": "Teclado",
         "mouseOrTouch": "Mouse o Teclado",
-        "help": "Ayuda"
+        "help": "Ayuda!"
     }
 }

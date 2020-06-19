@@ -1,5 +1,4 @@
-var sprites = []
-var sounds = []
+var currentLanguage;
 
 var registeredStates = []
 var currentState = undefined;
@@ -41,6 +40,10 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     frameRate(60);
     angleMode(RADIANS);
+    currentLanguage = langs['en-US'];
+    console.log(currentLanguage);
+    
+    
     touch = new Touch();
     controls = new Controls();
     //registeredStates.push(new MainMenuState());
@@ -56,6 +59,16 @@ function draw() {
     renderUI()
 }
 
+function getCurrentLanguageName()
+{
+    return currentLanguage.name;
+}
+
+function getTranslation(key)
+{
+    const value = currentLanguage.translations[key];
+    return value ? value : "NOT_FOUND";
+}
 
 function logic() {
     
