@@ -1,22 +1,24 @@
 class Player extends GameObject {
-    constructor(state, x, y) {
-        super(state, x, y);
+    constructor(state) {
+        super(state);
         this.speed = 1;
         this.rotationSpeed = Math.PI / 90;
         this.fanRot = 0;
         this.fanRotSpeed = Math.PI / 5;
 
-        this.fuel = 0;
         this.maxFuel = 10000;
+        this.fuel = this.maxFuel;
         this.peopleCarried = 0
         this.maxPeopleCarriable = 5;
         this.unloadingRescuesTimer = 0;
-        this.fuel = this.maxFuel
         this.completedRescues = 0
+
+        this.zOrder = 2;
     }
 
     onAdded() {
         super.onAdded()
+        sounds['rotor'].play(true);
     }
 
     moveTowards() {
@@ -27,12 +29,7 @@ class Player extends GameObject {
     updateObject() {
         super.updateObject();
 
-        if (isTouchHolding()) 
-        {
-            
-        }
-
-        else {
+        if (this.state.controlMode == KEYBOARD_MODE) {
             if (controls.right) {
                 this.rotation += this.rotationSpeed * this.fanRotSpeed;
             }
@@ -54,11 +51,29 @@ class Player extends GameObject {
             }
 
             else {
-                this.speed /= 1.1111111;
+                this.speed /= 1.1111111
+            }
+        }
+
+        else {
+            // Consertar o Hard Rotation.
+            if (touch.isTouchDragged()) {
+                this.rotation = touch.getAngle()
+                let touchMag = touch.getLength();
+
+                if (this.speed < 1) {
+                    this.speed += (Math.min(100, touchMag) / 100) * 0.01;
+                }
+
+                this.moveTowards();
             }
 
-            this.moveTowards()
+            else {
+                this.speed /= 1.111111
+            }
         }
+
+        this.moveTowards();
 
         for (let i = 0; i < this.state.gameObjects.length; i++) {
             const go = this.state.gameObjects[i];
@@ -66,7 +81,7 @@ class Player extends GameObject {
             if (go instanceof Touchable) {
                 const touchable = go;
 
-                if (distance(this.x, this.y, touchable.x, touchable.y) < touchable.radius / 2) {
+                if (distance(this.pos.x, this.pos.y, touchable.pos.x, touchable.pos.y) < touchable.radius / 2) {
                     touchable.isTouching = true;
                 }
 
@@ -89,12 +104,7 @@ class Player extends GameObject {
                 this.fanRotSpeed = 0;
             }
 
-            sounds['heli_rotor'].rate(this.fanRotSpeed);
-        }
-
-        if (this.fanRotSpeed > 0) {
-            sounds['heli_rotor'].playMode('untilDone');
-            sounds['heli_rotor'].play()
+            sounds['rotor'].setRate(this.fanRotSpeed);
         }
     }
 
@@ -102,16 +112,13 @@ class Player extends GameObject {
         super.renderObject();
         noSmooth()
         push();
-        translate(this.x, this.y);
+        translate(this.pos.x, this.pos.y);
         rotate(this.rotation + Math.PI / 2)
         translate(0, 10)
-        //scale(1, 1 - (0.15 * Math.abs(this.speed)))
-
         push()
         translate(-32, -32)
         image(sprites['heli'], 0, 0)
         pop()
-
         push()
         translate(0, -10)
         rotate(this.fanRot)

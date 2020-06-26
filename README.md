@@ -18,7 +18,6 @@ Seu combustível se esgotou pelo visto e ainda não temos uma tela de "Game Over
 ## Quero mutar o jogo!
 Basta apertar a tecla 'm'.
 
-## Futuras implementações:
-- Implementar o menu inicial.
-- Implementar tela de "Game Over".
-- Alterar o volume do jogo.
+## Modos de Controles!
+Savior tem dois modos de controle: Keyboard e Cursor.
+É possível trocar os modos pausando o jogo e apertando, ou 'k' para o modo Keyboard, ou 'c' para o modo Cursor.

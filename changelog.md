@@ -1,4 +1,3 @@
-12/06/2020
-
-- Função de mute adicionado na tecla 'm'.
-- As barras de rolagem da página foram removidas.
+- Novos sons adicionados.
+- Sons de fundo adicionados.
+- Sistema de idiomas adicionado, porém imanipulável.
